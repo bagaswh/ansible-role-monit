@@ -1,17 +1,22 @@
 ---
-- include: debian/pkg.yml
+- name: Install Monit (Debian)
+  ansible.builtin.include_tasks: debian/pkg.yml
   tags: monit_pkg
   when: ansible_os_family == "Debian"
 
-- include: redhat/pkg.yml
+- name: Install Monit (RedHat)
+  ansible.builtin.include_tasks: redhat/pkg.yml
   tags: monit_pkg
   when: ansible_os_family == "RedHat"
 
-- include: config.yml
+- name: Configure Monit
+  ansible.builtin.include_tasks: config.yml
   tags: monit_config
 
-- include: monitors.yml
+- name: Configure Monit monitors
+  ansible.builtin.include_tasks: monitors.yml
   tags: monit_monitors
 
-- include: service.yml
+- name: Start Monit service
+  ansible.builtin.include_tasks: service.yml
   tags: monit_service

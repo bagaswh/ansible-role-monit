@@ -1,38 +1,39 @@
 ---
-- name: monitors - Write monitors
-  template:
+- name: Monit - Write monitors
+  ansible.builtin.template:
     src: monitor.j2
     dest: "{{ monit_includes }}/{{ item.name }}"
     owner: root
     group: root
+    mode: "0600"
   with_items: "{{ monit_services }}"
   notify: restart monit
 
-- name: monitors - Create facts directory
-  file:
+- name: Monit - Create facts directory
+  ansible.builtin.file:
     path: "/etc/ansible/facts.d"
-    mode: 0755
+    mode: "0755"
     state: directory
 
-- name: monitors - Registers configured monitors
-  template:
+- name: Monit - Registers configured monitors
+  ansible.builtin.template:
     src: "monit.fact.j2"
     dest: "/etc/ansible/facts.d/monit.fact"
-    mode: 0644
+    mode: "0600"
   register: monit_write_facts
 
-- name: monitors - Reload facts
-  setup:
+- name: Monit - Reload facts
+  ansible.builtin.setup:
     filter: "ansible_local"
   when: monit_write_facts.changed
 
-- name: monitors - List configured monitors
-  command: ls -1 {{ monit_includes }}
+- name: Monit - List configured monitors
+  ansible.builtin.command: ls -1 {{ monit_includes }}
   register: monit_services_present
   changed_when: false
 
-- name: monitors - Remove unused monitors
-  file:
+- name: Monit - Remove unused monitors
+  ansible.builtin.file:
     path: "{{ monit_includes }}/{{ item }}"
     state: absent
   with_items: "{{ monit_services_present.stdout_lines | default([]) }}"

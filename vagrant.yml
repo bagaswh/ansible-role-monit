@@ -1,6 +1,6 @@
 ---
 - hosts: all
-  sudo: yes
+  become: true
 
   vars:
     monit_cycle: 120
@@ -25,7 +25,7 @@
         type: file
         target: /etc/monit/monitrc
         rules:
-          - "if changed timestamp then exec \"/bin/bash -c 'echo `data` >> /tmp/foo.bar.changed'\""
+          - 'if changed timestamp then exec "/bin/bash -c ''echo `data` >> /tmp/foo.bar.changed''"'
       - name: my_filesystem
         type: filesystem
         target: /dev/sda1
@@ -73,19 +73,19 @@
             Monit
 
   pre_tasks:
-    - name: testing - install apache - debian
-      apt:
+    - name: Testing - Install Apache - Debian
+      ansible.builtin.apt:
         pkg: apache2
-        update_cache: yes
+        update_cache: true
         cache_valid_time: 3600
-        state: installed
+        state: present
       when: ansible_os_family == "Debian"
 
-    - name: testing - install apache - redhat
-      yum:
+    - name: Testing - Install Apache - RedHat
+      ansible.builtin.dnf:
         pkg: httpd
-        state: installed
+        state: present
       when: ansible_os_family == "RedHat"
 
   roles:
-    - role: '{{playbook_dir}}'
+    - role: "{{playbook_dir}}"

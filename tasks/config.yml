@@ -1,40 +1,48 @@
 ---
-- include_vars: debian.yml
-  when:  ansible_os_family == "Debian"
+- name: Configure Monit (Debian)
+  ansible.builtin.include_vars: debian.yml
+  when: ansible_os_family == "Debian"
 
-- include_vars: redhat.yml
+- name: Configure Monit (RedHat)
+  ansible.builtin.include_vars: redhat.yml
   when: ansible_os_family == "RedHat"
 
-- name: create includes folder
-  file: path={{ monit_includes }} state=directory mode=0600
+- name: Create includes folder
+  ansible.builtin.file:
+    path: "{{ monit_includes }}"
+    state: directory
+    mode: "0600"
 
-- name: create lib folder
-  file: path="{{ monit_lib_folder }}" state=directory mode=0600
-  
-- name: config - Setup monitrc
-  template:
+- name: Create lib folder
+  ansible.builtin.file:
+    path: "{{ monit_lib_folder }}"
+    state: directory
+    mode: "0600"
+
+- name: Setup monitrc
+  ansible.builtin.template:
     src: monitrc.j2
-    dest: "{{monitrc_conf}}"
+    dest: "{{ monitrc_conf }}"
     owner: root
     group: root
-    mode: 0700
+    mode: "0700"
   notify: restart monit
 
-- name: config - Setup webinterface
-  template:
+- name: Setup webinterface
+  ansible.builtin.template:
     src: webinterface.j2
     dest: "{{ monit_includes }}/webinterface"
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   notify: restart monit
 
-- name: config - Setup mail alerts
-  template:
+- name: Setup mail alerts
+  ansible.builtin.template:
     src: mail.j2
     dest: "{{ monit_includes }}/mail"
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   notify: restart monit
   when: monit_mail_enabled

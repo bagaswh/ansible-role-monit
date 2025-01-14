@@ -1,5 +1,5 @@
 ---
-- name: web - Setup webinterface
+- name: Web - Setup webinterface
   template:
     src: webinterface.j2
     dest: "{{ monit_includes }}/webinterface"

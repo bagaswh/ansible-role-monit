@@ -1,7 +1,6 @@
 ---
-- name: service - ensure running and enabled
-  service:
+- name: Ensure service is running and enabled
+  ansible.builtin.service:
     name: "{{ monit_service }}"
     state: started
-    enabled: yes
-
+    enabled: true
